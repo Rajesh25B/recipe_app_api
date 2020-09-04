@@ -171,20 +171,24 @@ class PrivateRecipeApiTests(TestCase):
 
     def test_partial_update_recipe(self):
         '''Test updating a recipe with patch'''
-        recipe = sample_recipe(user=self.user)
-        recipe.tags.add(sample_tag(user=self.user))
+        recipe = sample_recipe(user=self.user)  # Created a sample recipe
+        recipe.tags.add(sample_tag(user=self.user))  # assigned tag
 
-        new_tag = sample_tag(user=self.user, name='Curry')
+        new_tag = sample_tag(user=self.user, name='Curry')  # Added new tag
 
+        # new recipe payload
         payload = {'title': 'Chicken Tikka', 'tags': [new_tag.id]}
 
-        url = detail_url(recipe.id)
+        url = detail_url(recipe.id)  # Added url and response
         self.client.patch(url, payload)
 
-        recipe.refresh_from_db()
+        recipe.refresh_from_db()  # refresh the db with new_tag values
 
+        # Assert existing recipe title with payload title
         self.assertEqual(recipe.title, payload['title'])
+        # Retrieve all tags assigned with payload tags
         tags = recipe.tags.all()
+        # Check length of the tags = 1
         self.assertEqual(len(tags), 1)
         self.assertIn(new_tag, tags)
 
@@ -192,7 +196,6 @@ class PrivateRecipeApiTests(TestCase):
         '''test updating a recipe with put'''
         recipe = sample_recipe(user=self.user)
         recipe.tags.add(sample_tag(user=self.user))
-        new_tag = sample_tag(user=self.user, name='Curry')
         payload = {'title': 'Spaghetti', 'time_minutes': 50, 'price': 100}
 
         url = detail_url(recipe.id)
